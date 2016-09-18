@@ -2,6 +2,8 @@ package cbsa.consumer.kiosk.accountmanagement.ui.account.statement;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,7 +52,7 @@ public class AccMgtEnterEmailDialogFragment extends RightDialogFragment {
     @Bind(R.id.btnCancel)
     View btnCancel;
     @Bind(R.id.btnSubmit)
-    View btnSubmit;
+    TextView btnSubmit;
     @Bind(R.id.rowRecipientInProfile)
     RelativeLayout rowRecipientInProfile;
     @Bind(R.id.rowRecipientCustom1)
@@ -61,6 +63,11 @@ public class AccMgtEnterEmailDialogFragment extends RightDialogFragment {
     TextView tvHeading;
 
     AccountStatementInfo accountStatementInfo;
+    IDialogListener dialogListener;
+
+    public void setDialogListener(IDialogListener dialogListener) {
+        this.dialogListener = dialogListener;
+    }
 
     @Parcel
     public static class AccountStatementInfo {
@@ -78,10 +85,14 @@ public class AccMgtEnterEmailDialogFragment extends RightDialogFragment {
 
     public static AccMgtEnterEmailDialogFragment newInstance(AccountStatementInfo accountStatementInfo) {
         AccMgtEnterEmailDialogFragment fragment = new AccMgtEnterEmailDialogFragment();
+        generateData(fragment, accountStatementInfo);
+        return fragment;
+    }
+
+    protected static void generateData(Fragment fragment, AccountStatementInfo accountStatementInfo) {
         Bundle data = new Bundle();
         data.putParcelable(STATEMENT_INFO, Parcels.wrap(accountStatementInfo));
         fragment.setArguments(data);
-        return fragment;
     }
 
     @Override
@@ -117,26 +128,28 @@ public class AccMgtEnterEmailDialogFragment extends RightDialogFragment {
         setUpView(accountStatementInfo);
     }
 
-    private void setUpView(AccountStatementInfo accountStatementInfo) {
-        setUpHeading(accountStatementInfo.isConfirmEmailInfo);
+    protected void setUpView(AccountStatementInfo accountStatementInfo) {
+        setUpHeading();
         setUpTitle(accountStatementInfo.statementType);
-        setUpExistEmail(accountStatementInfo);
+        setUpRowViews(accountStatementInfo);
     }
 
-    private void setUpHeading(boolean isConfirm) {
-        if (isConfirm) {
+    protected void setUpHeading() {
+        if (accountStatementInfo.isConfirmEmailInfo) {
             tvHeading.setText(R.string.account_statement_confirm_heading);
         } else {
             tvHeading.setText(R.string.account_statement_enter_email_heading);
         }
     }
 
-    private void setUpExistEmail(AccountStatementInfo accountStatementInfo) {
+    private void setUpRowViews(AccountStatementInfo accountStatementInfo) {
         // Setup email in profile
-        if (accountStatementInfo.emailInProfile != null) {
+        if (!TextUtils.isEmpty(accountStatementInfo.emailInProfile)) {
             // Show profile email
             rowRecipientInProfile.setVisibility(View.VISIBLE);
             edEmailInProfile.setEnabled(false);
+            edEmailInProfile.setText(accountStatementInfo.emailInProfile);
+            edEmailInProfile.setHint(accountStatementInfo.emailInProfile);
             btnChange.setText(getString(R.string.account_statement_enter_email_change));
         } else {
             // Hide profile email
@@ -150,15 +163,22 @@ public class AccMgtEnterEmailDialogFragment extends RightDialogFragment {
         setUpRowCustom(accountStatementInfo.emailSaved2, edEmailCustom2, rowRecipientCustom2);
 
         // Show hide button add
-        if (accountStatementInfo.emailSaved1 == null) {
-            btnAddRecipient.setVisibility(View.VISIBLE);
-        } else {
-            btnAddRecipient.setVisibility(View.GONE);
+        checkShowHideButtonAdd();
+    }
+
+    protected void checkShowHideButtonAdd() {
+        boolean isNeedToShow = false;
+        if (!isViewVisible(rowRecipientCustom1)) {
+            isNeedToShow = true;
         }
+        if (!isViewVisible(rowRecipientCustom2) && !isViewVisible(rowRecipientInProfile)) {
+            isNeedToShow = true;
+        }
+        btnAddRecipient.setVisibility(isNeedToShow ? View.VISIBLE : View.GONE);
     }
 
     private void setUpRowCustom(String emailCustom, EditText edEmail, View rowRecipient) {
-        if (emailCustom != null) {
+        if (!TextUtils.isEmpty(emailCustom)) {
             edEmail.setText(emailCustom);
             edEmail.setEnabled(false);
             rowRecipient.setVisibility(View.VISIBLE);
@@ -171,21 +191,31 @@ public class AccMgtEnterEmailDialogFragment extends RightDialogFragment {
     @OnClick(R.id.btnChange)
     void onBtnChangeClicked() {
         if (edEmailInProfile.isEnabled()) {
-            if (isValidEmail(edEmailInProfile.getText().toString())) {
+            boolean isEmptyInput = isEmptyInputEmailInProfile();
+            if (isValidEmail(edEmailInProfile.getText().toString()) || isEmptyInput) {
+                btnChange.setText(getString(R.string.account_statement_enter_email_change));
                 edEmailInProfile.setEnabled(false);
-                checkToShowButtonAddOtherRecipient();
+                if (isEmptyInput) {
+                    edEmailInProfile.setText(accountStatementInfo.emailInProfile);
+                }
+            } else {
+                showErrorMessage(edEmailInProfile);
             }
         } else {
+            btnChange.setText(getString(R.string.account_statement_enter_email_ok_to_change));
             edEmailInProfile.setEnabled(true);
         }
     }
 
-    private void checkToShowButtonAddOtherRecipient() {
-        if (btnAddRecipient.getVisibility() != View.VISIBLE) {
-            btnAddRecipient.setVisibility(View.VISIBLE);
-        }
+    private void showErrorMessage(EditText view) {
+        // TODO 1 show error message with custom toast here
+        view.requestFocus();
+        view.setError(getString(R.string.account_statement_email_invalid));
     }
 
+    private boolean isEmptyInputEmailInProfile() {
+        return edEmailInProfile.getText().length() == 0;
+    }
 
     private boolean isValidEmail(String email) {
         Pattern pattern = Patterns.EMAIL_ADDRESS;
@@ -196,15 +226,36 @@ public class AccMgtEnterEmailDialogFragment extends RightDialogFragment {
     void onBtnRemoveClicked() {
         edEmailCustom1.setText("");
         rowRecipientCustom1.setVisibility(View.GONE);
-        btnAddRecipient.setVisibility(View.VISIBLE);
+        checkShowHideButtonAdd();
+    }
 
+    @OnClick(R.id.btnRemove2)
+    void onBtnRemoveClicked2() {
+        edEmailCustom2.setText("");
+        rowRecipientCustom2.setVisibility(View.GONE);
+        checkShowHideButtonAdd();
     }
 
     @OnClick(R.id.btnAddRecipient)
     void onBtnAddRecipientClicked() {
-        edEmailCustom1.setEnabled(true);
-        rowRecipientCustom1.setVisibility(View.VISIBLE);
-        btnAddRecipient.setVisibility(View.GONE);
+        if (!showCustomRow(edEmailCustom1, rowRecipientCustom1)) {
+            showCustomRow(edEmailCustom2, rowRecipientCustom2);
+        }
+        checkShowHideButtonAdd();
+    }
+
+    private boolean showCustomRow(EditText edEmailCustom1, View customRow) {
+        if (isViewVisible(customRow)) {
+            return false;
+        } else {
+            customRow.setVisibility(View.VISIBLE);
+            edEmailCustom1.setEnabled(true);
+            return true;
+        }
+    }
+
+    public boolean isViewVisible(View view) {
+        return view.getVisibility() == View.VISIBLE;
     }
 
     @OnClick(R.id.btnCancel)
@@ -212,7 +263,59 @@ public class AccMgtEnterEmailDialogFragment extends RightDialogFragment {
         dismiss();
     }
 
-    private void setUpTitle(int statementType) {
+    @OnClick(R.id.btnSubmit)
+    void onSubmitClicked() {
+        if (validateInput()) {
+            dismiss();
+            if (dialogListener != null) {
+                dialogListener.onSubmitButtonClicked(getNewAccountStatementInfo());
+            }
+        }
+    }
+
+    private boolean validateInput() {
+        return validateEmailFormat(rowRecipientInProfile, edEmailInProfile)
+                && validateEmailFormat(rowRecipientCustom1, edEmailCustom1)
+                && validateEmailFormat(rowRecipientCustom2, edEmailCustom2)
+                && isNotEmptyEmailList();
+    }
+
+    private boolean isNotEmptyEmailList() {
+        return isViewVisible(rowRecipientInProfile)
+                || isViewVisible(rowRecipientCustom1)
+                || isViewVisible(rowRecipientCustom2);
+    }
+
+    private AccountStatementInfo getNewAccountStatementInfo() {
+        AccountStatementInfo accountStatementInfo = new AccountStatementInfo();
+        accountStatementInfo.statementType = this.accountStatementInfo.statementType;
+        accountStatementInfo.isConfirmEmailInfo = this.accountStatementInfo.isConfirmEmailInfo;
+        accountStatementInfo.emailInProfile = isViewVisible(edEmailInProfile) ? edEmailInProfile.getText().toString() : null;
+        accountStatementInfo.emailSaved1 = isViewVisible(edEmailCustom1) ? edEmailCustom1.getText().toString() : null;
+        accountStatementInfo.emailSaved2 = isViewVisible(edEmailCustom2) ? edEmailCustom2.getText().toString() : null;
+        return accountStatementInfo;
+    }
+
+    /**
+     * Validate email format for visible EditText view
+     *
+     * @param rowRecipientCustom1
+     * @param edEmailInProfile
+     */
+    private boolean validateEmailFormat(View rowRecipientCustom1, EditText edEmailInProfile) {
+        if (rowRecipientCustom1.getVisibility() == View.VISIBLE) {
+            if (!isValidEmail(edEmailInProfile.getText().toString())) {
+                showErrorMessage(edEmailInProfile);
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    protected void setUpTitle(int statementType) {
         switch (statementType) {
             case AccMgtConstants.AccountStatementType.LAST2MONTH:
                 setTitle(getString(R.string.account_statement_select_last_2_month)
@@ -236,5 +339,9 @@ public class AccMgtEnterEmailDialogFragment extends RightDialogFragment {
     private void setTitle(String title, String subTitle) {
         tvSelectedTitle.setText(title);
         tvSelectSubTitle.setText(subTitle);
+    }
+
+    public interface IDialogListener {
+        void onSubmitButtonClicked(AccountStatementInfo accountStatementInfo);
     }
 }

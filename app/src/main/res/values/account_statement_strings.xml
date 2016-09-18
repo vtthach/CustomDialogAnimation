@@ -17,4 +17,8 @@
     <string name="account_statement_enter_email_remove">Remove</string>
     <string name="account_statement_enter_email_change">Change</string>
     <string name="account_statement_confirm_heading">Confirm the email address\nwhere you would like to\nreceive your statement</string>
+    <string name="account_statement_email_invalid">Please enter a valid email address</string>
+    <string name="account_statement_enter_email_ok_to_change">Ok</string>
+    <string name="account_statement_success">Your statement has been sent by email</string>
+    <string name="account_statement_done">Done</string>
 </resources>

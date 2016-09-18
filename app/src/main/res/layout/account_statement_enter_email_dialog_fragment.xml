@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/AccountRightDialogRootContainer">
+    style="@style/AccountRightDialogRootContainer"
+    android:animateLayoutChanges="true">
     <!--Width & height of root layout will override by window param when use this layout for Dialog-->
+    <ImageView
+        android:id="@+id/imgSuccess"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:visibility="gone"
+        android:src="@mipmap/ic_launcher" />
+
     <TextView
         android:id="@+id/tvHeading"
         style="@style/AccountRightDialogHeading"
+        android:layout_toRightOf="@id/imgSuccess"
         android:text="@string/account_statement_enter_email_heading" />
 
     <RelativeLayout
@@ -148,23 +158,23 @@
             <TextView
                 android:id="@+id/btnCancel"
                 style="@style/AccountRightDialogNegPosButton"
-                android:background="@drawable/rightdialog_selector_btn_negative"
                 android:layout_marginEnd="@dimen/account_statement_select_button_margin"
-                android:layout_marginRight="@dimen/account_statement_select_button_margin"
                 android:layout_marginLeft="@dimen/account_statement_elevator"
+                android:layout_marginRight="@dimen/account_statement_select_button_margin"
                 android:layout_marginStart="@dimen/account_statement_elevator"
                 android:layout_marginTop="@dimen/account_statement_elevator"
+                android:background="@drawable/rightdialog_selector_btn_negative"
                 android:text="@string/account_statement_button_cancel" />
 
             <TextView
                 android:id="@+id/btnSubmit"
                 style="@style/AccountRightDialogNegPosButton"
-                android:background="@drawable/rightdialog_selector_btn_positive"
                 android:layout_marginEnd="@dimen/account_statement_elevator"
                 android:layout_marginLeft="@dimen/account_statement_select_button_margin"
                 android:layout_marginRight="@dimen/account_statement_elevator"
                 android:layout_marginStart="@dimen/account_statement_select_button_margin"
                 android:layout_marginTop="@dimen/account_statement_elevator"
+                android:background="@drawable/rightdialog_selector_btn_positive"
                 android:text="@string/account_statement_button_submit" />
         </LinearLayout>
     </LinearLayout>
