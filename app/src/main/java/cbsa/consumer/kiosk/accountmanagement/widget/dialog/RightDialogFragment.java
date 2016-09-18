@@ -31,7 +31,7 @@ public abstract class RightDialogFragment extends CustomWindowDialogFragment {
     }
 
     private int getMastheadSize() {
-        return dpToPixel(160);
+        return dpToPixel(110);
     }
 
     private int getViewHeightById(@IdRes int viewId) {
