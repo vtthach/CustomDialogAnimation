@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="right_dialog_color_blue">#3e60f7</color>
+    <color name="right_dialog_bkg_row">#F4F4F4</color>
+    <color name="right_dialog_btn_positive_focus">#e7af18</color>
+    <color name="right_dialog_btn_positive">#ffcc00</color>
+    <color name="right_dialog_btn_negative">#FFF</color>
+    <color name="right_dialog_ripple_gray">#F2F2F2</color>
+    <color name="right_dialog_ripple_yellow">#ffcc00</color>
+</resources>

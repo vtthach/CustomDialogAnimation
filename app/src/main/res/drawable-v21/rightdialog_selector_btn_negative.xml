@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/right_dialog_ripple_yellow">
+    <item
+        android:id="@android:id/mask"
+        android:drawable="@drawable/rightdialog_bkg_btn_negative" />
+    <item android:drawable="@drawable/rightdialog_bkg_btn_negative" />
+</ripple>
+
+

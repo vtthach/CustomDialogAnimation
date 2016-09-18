@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="account_statement_select_button_corner_radius">5dp</dimen>
+    <dimen name="account_statement_select_button_margin">10dp</dimen>
+    <dimen name="account_statement_elevator">4dp</dimen>
+</resources>

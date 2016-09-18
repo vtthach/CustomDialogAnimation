@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="account_statement_select_title">Select a period to send via email</string>
+    <string name="account_statement_select_notice">If you require statements older than 180 days please contact our Customer Contact Centre on 0860 000 387.</string>
+    <string name="account_statement_select_last_month">Last month</string>
+    <string name="account_statement_select_last_month_sub">1 calendar month.</string>
+    <string name="account_statement_select_last_2_month">Last 2 months</string>
+    <string name="account_statement_select_last_2_month_sub">2 calendar months.</string>
+    <string name="account_statement_select_last_3_month">Last 3 months</string>
+    <string name="account_statement_select_last_3_month_sub">3 calendar months.</string>
+    <string name="account_statement_select_last_6_month">Last 6 months</string>
+    <string name="account_statement_select_last_6_month_sub">6 calendar months.</string>
+    <string name="account_statement_button_cancel">Cancel</string>
+    <string name="account_statement_button_submit">Submit</string>
+    <string name="account_statement_enter_email_heading">Enter the email address\nwhere you would like to\nreceive your statement</string>
+    <string name="account_statement_enter_email_to">To</string>
+    <string name="account_statement_enter_email_remove">Remove</string>
+    <string name="account_statement_enter_email_change">Change</string>
+    <string name="account_statement_confirm_heading">Confirm the email address\nwhere you would like to\nreceive your statement</string>
+</resources>

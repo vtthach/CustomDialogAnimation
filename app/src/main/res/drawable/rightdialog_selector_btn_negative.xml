@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/rightdialog_bkg_btn_negative_focus" android:state_focused="true" android:state_pressed="true" />
+    <item android:drawable="@drawable/rightdialog_bkg_btn_negative_focus" android:state_focused="false" android:state_pressed="true" />
+    <item android:drawable="@drawable/rightdialog_bkg_btn_negative" />
+</selector>
+
